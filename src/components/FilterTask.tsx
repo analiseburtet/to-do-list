@@ -52,12 +52,13 @@ export function FilterTask() {
   });
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    const filteredTasks =
-      data.status === "todas"
-        ? tasks
-        : tasks.filter(
-            (task) => task.completed === (data.status === "completo")
-          );
+    const statusMap = {
+      todas: () => tasks,
+      completo: () => tasks.filter((task) => task.completed),
+      incompleto: () => tasks.filter((task) => !task.completed),
+    };
+
+    const filteredTasks = statusMap[data.status]?.() || tasks;
     setFilterStatus(data.status);
     setFilteredTasks(filteredTasks);
   }
